@@ -1,0 +1,30 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: host-namespaces-cue
+  annotations:
+    catalog.chainguard.dev/title: Disallow host namespaces
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      Sharing the host namespaces must be disallowed.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      spec: {
+        hostNetwork: false
+        hostIPC: false
+        hostPID: false
+      }

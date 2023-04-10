@@ -1,0 +1,51 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  # This is a policy template for creating custom Rego-based policies in Enforce.
+  # Rename the name:, title:, and description: fields below to describe the policy you are creating
+  name: policy-rego
+  annotations:
+    catalog.chainguard.dev/title: Rego Policy Template
+    catalog.chainguard.dev/labels: rego,popular
+    catalog.chainguard.dev/description: |
+      Create your custom Rego-based policy
+
+    catalog.chainguard.dev/learnMoreLink: https://edu.chainguard.dev/chainguard/chainguard-enforce/chainguard-enforce-kubernetes/chainguard-enforce-rego-policies/
+
+# The spec fields are defined at https://github.com/sigstore/policy-controller/blob/main/docs/api-types/index.md#clusterimagepolicyspec
+# By default, this policy will apply to all images (glob: '**'). See documentation for filtering to specific image sources with a glob pattern.
+# For this policy, specifying authorities: [static: {action: pass}] indicates that this policy will not be validating a signature on the image. Instead, the Rego policy section below will be used to validate input document data.
+# This policy is configured in WARN mode by default, meaning resources will still be admitted to the cluster if the policy is violated, but a warning will be surfaced to Enforce. To change to ENFORCE mode, change the mode: field to "enforce"
+spec:
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+
+  # This is where we define the Rego policy.
+  # The first requirement is to include the input data that should be evaluated.
+  # By default, the image in the registry is available.
+  # To include additional metadata, set one or more of the following:
+  # includeSpec: true, includeObjectMeta:true, includeTypeMeta:true , fetchConfigFile:true
+  # Enforce Rego policies must specify type: "rego", and,
+  # the data: field must contain "package sigstore"
+  # For the policy to pass, "isCompliant" must evaluate to "true" within the braces
+
+  policy:
+    includeSpec: true
+    type: "rego"
+    data: |
+      package sigstore
+      default isCompliant = false
+      isCompliant {
+
+        # include Rego logic here
+        # To access the input document (resource Spec file in this example), traverse the json with input.spec.field.key.value
+        # The statement below will iterate over the containers array in the resource Spec,
+        # and will return true if the names of all containers in the spec are "your-container-name"
+
+        input.spec.containers[_].name == "your-container-name"
+      }
+

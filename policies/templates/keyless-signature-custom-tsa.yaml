@@ -1,0 +1,45 @@
+# Copyright 2023 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: keyless-signature-custom-tsa
+  annotations:
+    catalog.chainguard.dev/title: Verify TSA signing Image
+    catalog.chainguard.dev/description: Verify TSA signing Image
+    catalog.chainguard.dev/labels: tsa,keyless,oidc
+spec:
+  images:
+  - glob: gcr.io/your-image-here/*
+  authorities:
+  - keyless:
+      trustRootRef: my-sigstore-keys
+      url: https://<sigstore-hostname-instance>
+      identities:
+        - issuer: https://your.issuer.dev/
+          subject: foo@example.com
+      insecureIgnoreSCT: true # In case, there isn't any proof of inclusion in a certificate transparency log.
+    rfc3161timestamp:
+      trustRootRef: my-sigstore-keys
+---
+apiVersion: policy.sigstore.dev/v1alpha1
+kind: TrustRoot
+metadata:
+  name: my-sigstore-keys
+spec:
+  sigstoreKeys:
+    certificateAuthorities:
+    - subject:
+        organization: <my-organization>
+        commonName: <my-common-name>
+      uri: https://<my-sigstore-hostname-instance>
+      certChain: |-
+        SIGSTORE_ROOT_CA_BASE_64
+    timestampAuthorities:
+    - subject:
+        organization: organization.dev
+        commonName: organization-tsa
+      uri: https://my-tsa-hostname-instance>
+      certChain: |-
+        CERTIFICATE_CHAIN_CA_BASE6_64

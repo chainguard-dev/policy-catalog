@@ -1,0 +1,33 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: host-ports-rego
+  annotations:
+    catalog.chainguard.dev/title: Disallow host ports
+    catalog.chainguard.dev/labels: rego,workloads
+    catalog.chainguard.dev/description: |
+      HostPorts should be disallowed, or at minimum restricted to a known list.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "rego"
+    data: |
+      package sigstore
+      default isCompliant = false
+      isCompliant {
+        filteredContainers = [c | c := input.spec.containers[_].ports[_]; c.hostPort == "0"]
+        filteredInitContainers = [c | c := input.spec.initContainers[_].ports[_]; c.hostPort == "0"]
+        filteredEphemeralContainers = [c | c := input.spec.ephemeralContainers[_].ports[_]; c.hostPort == "0"]
+        (count(filteredContainers) + count(filteredInitContainers) + count(filteredEphemeralContainers)) == 0
+      }

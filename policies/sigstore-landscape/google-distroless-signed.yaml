@@ -1,0 +1,22 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: google-distroless-signed
+  annotations:
+    catalog.chainguard.dev/title: Google distroless is signed
+    catalog.chainguard.dev/description: Enforce that Google's distroless images are signed
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+    - glob: gcr.io/distroless/**
+  authorities:
+    - ctlog:
+        url: https://rekor.sigstore.dev
+      keyless:
+        identities:
+          - issuer: https://accounts.google.com
+            subject: keyless@distroless.iam.gserviceaccount.com
+        url: https://fulcio.sigstore.dev

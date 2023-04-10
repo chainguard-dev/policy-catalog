@@ -1,0 +1,31 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: hostpath-volumes-cue
+  annotations:
+    catalog.chainguard.dev/title: Disallow hostpath volumes
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      HostPath volumes must be forbidden.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      spec: {
+        volumes: [...{
+          hostPath:
+            path: ""
+        }]
+      }

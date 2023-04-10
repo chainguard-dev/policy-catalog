@@ -1,0 +1,21 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: istio-signed
+  annotations:
+    catalog.chainguard.dev/title: Istio is signed
+    catalog.chainguard.dev/description: Enforce that Istio images are signed
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+    - glob: index.docker.io/istio/*
+  authorities:
+    - key:
+        data: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEej5bv2n2vOecKineYGWwq1WaQa7C
+          7HTEVN+BkNI4D1+66ufzn1eGTrbaC9dceJqCAkhp37vMxhWOrGufpBUokg==
+          -----END PUBLIC KEY-----

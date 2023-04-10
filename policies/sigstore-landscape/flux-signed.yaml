@@ -1,0 +1,25 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: flux-signed
+  annotations:
+    catalog.chainguard.dev/title: Flux is signed
+    catalog.chainguard.dev/description: |
+      Enforce that the Flux images are signed by the Flux
+      release's workload identity.
+    catalog.chainguard.dev/learnMoreLink: https://fluxcd.io/blog/2022/02/security-image-provenance
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+  - glob: ghcr.io/fluxcd/source-controller*
+  authorities:
+  - keyless:
+      url: https://fulcio.sigstore.dev
+      identities:
+      - issuer: https://token.actions.githubusercontent.com
+        subjectRegExp: https://github\.com/fluxcd/source-controller/\.github/workflows/release\.yml@refs/tags/v.*
+    ctlog:
+      url: https://rekor.sigstore.dev

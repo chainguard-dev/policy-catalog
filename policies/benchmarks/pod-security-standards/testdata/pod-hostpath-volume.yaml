@@ -1,0 +1,20 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: yolo
+spec:
+  containers:
+  - name: "app"
+    image: docker.io/ubuntu
+    volumeMounts:
+    - name: woot
+      mountPath: /foo/bar/baz
+  volumes:
+  - name: woot
+    hostPath:
+      # Violates hostpath-volumes
+      path: "/"
+

@@ -1,0 +1,22 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: keyless-signature
+  annotations:
+    catalog.chainguard.dev/title: Signature policy
+    catalog.chainguard.dev/description: Enforce images are signed
+    catalog.chainguard.dev/labels: popular, oidc
+spec:
+  images:
+    - glob: gcr.io/your-image-here/*
+  authorities:
+    - keyless:
+        identities: # <<<-- REPLACE the following with your OIDC provider & subject --> #
+          - issuer: https://accounts.google.com
+            subject: foo@example.com
+        url: https://fulcio.sigstore.dev
+      ctlog:
+        url: https://rekor.sigstore.dev

@@ -1,0 +1,27 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: knative-signed
+  annotations:
+    catalog.chainguard.dev/title: Knative is signed
+    catalog.chainguard.dev/description: |
+      Enforce that the Knative images are signed by the Knative
+      release team's workload identity.
+
+      Knative started signing some images in 1.8, and plans to
+      sign all of their images starting in 1.9+
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+  - glob: gcr.io/knative-releases/**
+  authorities:
+  - keyless:
+      url: https://fulcio.sigstore.dev
+      identities:
+      - issuer: https://accounts.google.com
+        subject: signer@knative-releases.iam.gserviceaccount.com
+    ctlog:
+      url: https://rekor.sigstore.dev

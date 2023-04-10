@@ -1,0 +1,49 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: baseline-seccomp-cue
+  annotations:
+    catalog.chainguard.dev/title: Disallow unconfined seccomp
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      Seccomp profile must not be explicitly set to Unconfined.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      // Create a schema for SecurityContext where seccompProfile can only
+      // be set to the allowed values, if it is specified.
+      #SecurityContext: {
+        seccompProfile?: {
+          type?: "RuntimeDefault" | "Localhost"
+          ...
+        }
+        ...
+      }
+      spec: {
+        // Apply the schema to the security context at the pod level.
+        securityContext: #SecurityContext
+
+        // Apply the schema to the security context in each container.
+        initContainers: [...{
+          securityContext: #SecurityContext
+        }]
+        containers: [...{
+          securityContext: #SecurityContext
+        }]
+        ephemeralContainers: [...{
+          securityContext: #SecurityContext
+        }]
+      }

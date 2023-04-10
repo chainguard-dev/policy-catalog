@@ -1,0 +1,47 @@
+# Copyright 2023 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: disallow-apparmor-override-cue
+  annotations:
+    catalog.chainguard.dev/title: Disallow overriding AppArmor
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      On supported hosts, the runtime/default AppArmor profile is applied by default.
+      The baseline policy should prevent overriding or disabling the default AppArmor
+      profile, or restrict overrides to an allowed set of profiles.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeObjectMeta: true
+    includeSpec: true
+    type: "cue"
+    data: |
+      import "strings"
+
+      // container.apparmor.security.beta.kubernetes.io/<container_name>: <profile_ref>
+      // allowed values include runtime/default, localhost/*, or leaving it unspecified.
+      metadata: {}
+
+      spec: {
+        #Container: {
+          name: string
+          apparmor: metadata.annotations["container.apparmor.security.beta.kubernetes.io/" + name]
+          if apparmor != "runtime/default" && !strings.HasPrefix(apparmor, "localhost/") {
+            name: "invalid apparmor profile \(apparmor)"
+          }
+          ...
+        }
+        initContainers: [...#Container]
+        containers: [...#Container]
+        ephemeralContainers: [...#Container]
+      }

@@ -1,0 +1,71 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: restricted-capabilities-cue
+  annotations:
+    catalog.chainguard.dev/title: Restricted capabilities
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      Containers must drop ALL capabilities, and are only permitted to add back
+      the NET_BIND_SERVICE capability.
+      This is Linux only policy in v1.25+ (.spec.os.name != "windows")
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      import "list"
+
+      #AllowedAdd: "NET_BIND_SERVICE"
+
+      // Create a schema for SecurityContext where capabilities is required with
+      // drop consisting of any list containing `ALL`, and with add containing only
+      // NET_BIND_SERVICE (if specified at all)
+      #SecurityContext: {
+        capabilities: {
+          drop: [...string] | *[]
+          add?: [...#AllowedAdd]
+        }
+        ...
+      }
+
+      spec: {
+        initContainers: [...{
+          // Apply the schema to the security context in each container.
+          securityContext: #SecurityContext
+
+          // Check that the container drops ALL capabilities
+          if !list.Contains(securityContext.capabilities.drop, "ALL") {
+            name: "init container does not drop ALL capabilities"
+          }
+        }]
+        containers: [...{
+          // Apply the schema to the security context in each container.
+          securityContext: #SecurityContext
+
+          // Check that the container drops ALL capabilities
+          if !list.Contains(securityContext.capabilities.drop, "ALL") {
+            name: "container does not drop ALL capabilities"
+          }
+        }]
+        ephemeralContainers: [...{
+          // Apply the schema to the security context in each container.
+          securityContext: #SecurityContext
+
+          // Check that the container drops ALL capabilities
+          if !list.Contains(securityContext.capabilities.drop, "ALL") {
+            name: "ephemeral container does not drop ALL capabilities"
+          }
+        }]
+      }

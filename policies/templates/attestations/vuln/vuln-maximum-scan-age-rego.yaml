@@ -1,0 +1,46 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: vuln-maximum-scan-age-rego
+  annotations:
+    catalog.chainguard.dev/title: Maximum scan age
+    catalog.chainguard.dev/description: |
+      This checks that the maximum age a scan attestation of type cosign-vuln is allowed to
+      have is 15 days old.  This is measured using the vulnerability
+      attestation predicate data, which has a "metadata.scanFinishedOn" field.
+    catalog.chainguard.dev/labels: attestation,rego
+spec:
+  images:
+    - glob: "**"
+  authorities:
+    - name: my-authority
+      keyless:
+        url: https://fulcio.sigstore.dev
+        identities:
+        - issuerRegExp: .*
+          subjectRegExp: .*
+      attestations:
+        - name: vuln-report-scan-max-age
+          predicateType: cosign.sigstore.dev/attestation/vuln/v1
+          policy:
+            type: rego
+            data: |
+              package sigstore
+              nanosecs_per_second = 1000 * 1000 * 1000
+              nanosecs_per_day = 24 * 60 * 60 * nanosecs_per_second
+
+              # Change this to the maximum number of days to allow.
+              maximum_age = 15 * nanosecs_per_day
+
+              isCompliant[response] {
+                created := time.parse_rfc3339_ns(input.predicate.metadata.scanFinishedOn)
+
+                response := {
+                  "result" : time.now_ns() < created + maximum_age,
+                  "error" : "Scan exceeds maximum allowed age."
+                }
+              }
+

@@ -1,0 +1,14 @@
+# Copyright 2023 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: yolo
+spec:
+  template:
+    spec:
+      # This is a Cloud Run-style service account
+      serviceAccountName: "name@project.iam.gserviceaccount.com"
+      containers:
+      - image: docker.io/ubuntu

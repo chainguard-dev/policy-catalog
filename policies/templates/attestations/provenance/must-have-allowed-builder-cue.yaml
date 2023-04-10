@@ -1,0 +1,48 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: must-have-allowed-builder-cue
+  annotations:
+    catalog.chainguard.dev/title: Enforce SLSA attestation
+    catalog.chainguard.dev/description: Enforce a signed SLSA attestation with a custom key and a builder
+    catalog.chainguard.dev/labels: attestation,cue,slsa
+spec:
+  images:
+    - glob: gcr.io/your-image-here/*
+  authorities:
+    - name: my-authority
+      key:
+        # REPLACE WITH YOUR PUBLIC KEY!
+        data: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsbv3N64YFfMR7M7fgFeAK6wZJtCm
+          7wxHgZ7q8IgTK8mkIoU6/qunfRQo8AH0Qb8RjKIkNPFT0AG8pSMhOmG4Cw==
+          -----END PUBLIC KEY-----
+      attestations:
+        - name: must-have-builder
+          predicateType: https://slsa.dev/provenance/v0.2
+          policy:
+            type: cue
+            data: |
+              import (
+                "list"
+                "strings"
+              )
+              let allowedBuilderID = ["https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.4.0"]
+              predicateType: "https://slsa.dev/provenance/v0.2"
+              predicate: {
+                payloadType: "application/vnd.in-toto+json"
+                builder: {
+                  id: id
+                  if !list.Contains(allowedBuilderID, id) {
+                   err: strings.Join([
+                     "Error: SLSA provenance contains an invalid builder id",
+                     id,
+                   ], " ")
+                   id: err
+                  }
+                }
+              }

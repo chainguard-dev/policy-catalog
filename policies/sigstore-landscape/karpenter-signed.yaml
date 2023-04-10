@@ -1,0 +1,24 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: karpenter-signed
+  annotations:
+    catalog.chainguard.dev/title: Karpenter is signed
+    catalog.chainguard.dev/description: |
+      Enforce that the Karpenter images are signed by the Karpenter
+      release's workload identity.
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+  - glob: public.ecr.aws/karpenter/**
+  authorities:
+  - keyless:
+      url: https://fulcio.sigstore.dev
+      identities:
+      - issuer: https://token.actions.githubusercontent.com
+        subject: https://github.com/aws/karpenter/.github/workflows/stable-release.yml@refs/heads/main
+    ctlog:
+      url: https://rekor.sigstore.dev

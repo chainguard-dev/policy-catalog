@@ -1,0 +1,48 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: host-namespaces-rego
+  annotations:
+    catalog.chainguard.dev/title: Disallow host namespaces
+    catalog.chainguard.dev/labels: rego,workloads
+    catalog.chainguard.dev/description: |
+      Sharing the host namespaces must be disallowed.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "rego"
+    data: |
+      package sigstore
+      default isCompliant := false
+      isCompliant {
+        filteredHostNetwork = [c | c := input.spec; host_network ]
+        filteredHostPID = [c | c := input.spec; host_pid ]
+        filteredHostIPC = [c | c := input.spec; host_ipc ]
+        (count(filteredHostIPC) + count(filteredHostPID) + count(filteredHostNetwork)) == 0
+      }
+      host_network {
+       input.spec.hostNetwork == true
+      } {
+       input.spec.hostNetwork == "true"
+      }
+      host_pid {
+       input.spec.hostPID == true
+      } {
+       input.spec.hostPID == "true"
+      }
+      host_ipc {
+       input.spec.hostIPC == true
+      } {
+       input.spec.hostIPC == "true"
+      }

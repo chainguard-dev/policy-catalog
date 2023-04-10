@@ -1,0 +1,24 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: tekton-signed
+  annotations:
+    catalog.chainguard.dev/title: Tekton is signed
+    catalog.chainguard.dev/description: |
+      Enforce that the Tekton images are signed using the upstream
+      verification key.
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+    - glob: gcr.io/tekton-releases/**
+  authorities:
+    - key:
+        # From: https://raw.githubusercontent.com/tektoncd/chains/main/tekton.pub
+        data: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEnLNw3RYx9xQjXbUEw8vonX3U4+tB
+          kPnJq+zt386SCoG0ewIH5MB8+GjIDGArUULSDfjfM31Eae/71kavAUI0OA==
+          -----END PUBLIC KEY-----

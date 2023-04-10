@@ -1,0 +1,22 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: chainguard-images-signed
+  annotations:
+    catalog.chainguard.dev/title: Chainguard Images
+    catalog.chainguard.dev/description: Enforce Chainguard images are signed
+    catalog.chainguard.dev/labels: chainguard
+spec:
+  images:
+    - glob: cgr.dev/chainguard/**
+  authorities:
+    - keyless:
+        url: https://fulcio.sigstore.dev
+        identities:
+          - issuer: https://token.actions.githubusercontent.com
+            subject: https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main
+      ctlog:
+        url: https://rekor.sigstore.dev

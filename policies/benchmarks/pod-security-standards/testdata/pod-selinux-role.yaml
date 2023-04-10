@@ -1,0 +1,15 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: yolo
+spec:
+  securityContext:
+    seLinuxOptions:
+      role: "instigator"
+
+  containers:
+  - name: "app"
+    image: docker.io/ubuntu

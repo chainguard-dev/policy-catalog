@@ -1,0 +1,54 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: yolo
+spec:
+  securityContext:
+    sysctls:
+    - name: net.ipv4.ip_unprivileged_port_start
+      value: "0"
+    seccompProfile:
+      type: RuntimeDefault
+    windowsOptions:
+      hostProcess: false
+    seLinuxOptions:
+      type: "container_t"
+
+  containers:
+  - name: "app"
+    image: docker.io/ubuntu
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        add:
+        - NET_BIND_SERVICE
+        drop:
+        - ALL
+      seLinuxOptions:
+        type: "container_kvm_t"
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: bill
+      mountPath: /foo/bar/baz
+
+  - name: "sidecar"
+    image: docker.io/ubuntu
+    securityContext:
+      allowPrivilegeEscalation: false
+      windowsOptions:
+        hostProcess: false
+      privileged: false
+      runAsUser: 65532
+      capabilities:
+        drop:
+        - ALL
+      seccompProfile:
+        type: RuntimeDefault
+
+  volumes:
+  - name: bill
+    emptyDir: {}

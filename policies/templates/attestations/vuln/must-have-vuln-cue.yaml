@@ -1,0 +1,37 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+#############################################################################################
+# To generate an attestation with a scan report and attest it to an image follow these steps:
+# $ trivy image --format cosign-vuln --output vuln.json <IMAGE>
+# $ cosign attest --key /path/to/cosign.key --type vuln --predicate vuln.json <IMAGE>
+#
+# $ cosign verify-attestation --key /path/to/cosign.pub --type vuln <IMAGE>
+#############################################################################################
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: must-have-vuln-cue
+  annotations:
+    catalog.chainguard.dev/title: Vulnerability attestation
+    catalog.chainguard.dev/description: Enforce a signed vulnerability attestation
+    catalog.chainguard.dev/labels: attestation,cue
+spec:
+  images:
+    - glob: gcr.io/your-image-here/*
+  authorities:
+    - name: my-authority
+      key:
+        # REPLACE WITH YOUR PUBLIC KEY!
+        data: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsbv3N64YFfMR7M7fgFeAK6wZJtCm
+          7wxHgZ7q8IgTK8mkIoU6/qunfRQo8AH0Qb8RjKIkNPFT0AG8pSMhOmG4Cw==
+          -----END PUBLIC KEY-----
+      attestations:
+        - name: must-have-vuln-attestation
+          predicateType: https://cosign.sigstore.dev/attestation/vuln/v1
+          policy:
+            type: cue
+            data: |
+              predicateType: "https://cosign.sigstore.dev/attestation/vuln/v1"

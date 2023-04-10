@@ -1,0 +1,62 @@
+# Copyright 2021 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+name: Lint
+
+on:
+  pull_request:
+    branches: [ 'main', 'release-*' ]
+
+jobs:
+
+  boilerplate:
+    name: Boilerplate Check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Keep running if one leg fails.
+      matrix:
+        extension:
+        - yaml
+        - go
+
+        # Map between extension and human-readable name.
+        include:
+        - extension: yaml
+          language: YAML
+        - extension: go
+          language: Go
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - uses: chainguard-dev/actions/boilerplate@main
+        with:
+          extension: ${{ matrix.extension }}
+          language: ${{ matrix.language }}
+
+  action-lint:
+    name: Action lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Action lint
+        uses: reviewdog/action-actionlint@4decc2a20473dcd14c8c3dc8a27da19d95bb9f59 # v1.34.2
+
+  spacing:
+    name: Spacing
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: chainguard-dev/actions/trailing-space@main
+      - uses: chainguard-dev/actions/eof-newline@main
+
+  donotsubmit:
+    name: Do not submit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: chainguard-dev/actions/donotsubmit@main

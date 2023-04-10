@@ -1,0 +1,37 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  # This is the name of your policy.
+  name: basic
+  annotations:
+    catalog.chainguard.dev/title: Custom
+    catalog.chainguard.dev/description: Create your custom policy
+    catalog.chainguard.dev/labels: popular
+spec:
+  images:
+    # Replace this glob to match your images. Learn more about image patterns:
+    # https://docs.sigstore.dev/policy-controller/overview/#configuring-image-patterns
+    - glob: gcr.io/your-image-here/*
+  authorities:
+    # The policy will be evaluated against the identities listed in this section.
+
+    # Learn how to configure a `key` authority:
+    # https://docs.sigstore.dev/policy-controller/overview/#configuring-key-authorities
+    - key:
+        hashAlgorithm: sha256
+        # REPLACE WITH YOUR PUBLIC KEY!
+        data: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsbv3N64YFfMR7M7fgFeAK6wZJtCm
+          7wxHgZ7q8IgTK8mkIoU6/qunfRQo8AH0Qb8RjKIkNPFT0AG8pSMhOmG4Cw==
+          -----END PUBLIC KEY-----
+
+    # Learn how to configure a `keyless` authority:
+    # https://docs.sigstore.dev/policy-controller/overview/#configuring-keyless-authorities
+    - keyless:
+        identities:
+          - issuer: https://accounts.google.com
+            subject: foo@example.com

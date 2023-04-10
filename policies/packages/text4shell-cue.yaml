@@ -1,0 +1,49 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: text4shell-cue
+  annotations:
+    catalog.chainguard.dev/title: Text4Shell
+    catalog.chainguard.dev/description: Ensure Text4Shell is not running
+    catalog.chainguard.dev/labels: cue
+spec:
+  images:
+    - glob: "**" # Your image here
+  authorities:
+    - name: sigstore
+      keyless:
+        url: "https://fulcio.sigstore.dev"
+        identities:
+        # Check the identity you expect to be signing SBOMs here!
+        - issuerRegExp: ".*"
+          subjectRegExp: ".*"
+      attestations:
+        - predicateType: https://cyclonedx.org/bom
+          name: text4shellcyclonedx
+          policy:
+            type: cue
+            data: |
+              import (
+                "list"
+                "strings"
+              )
+
+              let text4shell_names = ["commons-text"]
+              let text4shell_versions = ["1.5", "1.6", "1.7", "1.8", "1.9"]
+
+              predicate: components: [...{
+                name:    name
+                version: version
+                if list.Contains(text4shell_names, name) &&
+                  list.Contains(text4shell_versions, version) {
+                  err: strings.Join([
+                    "Error: CycloneDX SBOM contains package",
+                    name, "version", version, "which is",
+                    "vulnerable to text4shell (CVE-2022-42889)",
+                  ], " ")
+                  name: err
+                }
+              }]

@@ -1,0 +1,44 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: restricted-volumes-cue
+  annotations:
+    catalog.chainguard.dev/title: Restricted volume types
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      The restricted policy only permits the following volume types.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      // Create a Volume schema with optional fields for each of the possibilities,
+      // and then close the type (no ...).
+      #Volume: {
+        name: string
+
+        // These are the volume types that are allowed in the restricted profile.
+        configMap?: {...}
+        csi?: {...}
+        downwardAPI?: {...}
+        emptyDir?: {...}
+        ephemeral?: {...}
+        persistentVolumeClaim?: {...}
+        projected?: {...}
+        secret?: {...}
+      }
+
+      spec: {
+        volumes: [...#Volume]
+      }

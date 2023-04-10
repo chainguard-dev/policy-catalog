@@ -1,0 +1,55 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: host-process-cue
+  annotations:
+    catalog.chainguard.dev/title: Disallow HostProcess
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      Windows pods offer the ability to run HostProcess containers which enables
+      privileged access to the Windows node. Privileged access to the host is
+      disallowed in the baseline policy.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      spec: {
+        securityContext: {
+          windowsOptions: {
+            hostProcess: false
+          }
+        }
+        initContainers: [...{
+          securityContext: {
+            windowsOptions: {
+              hostProcess: false
+            }
+          }
+        }]
+        containers: [...{
+          securityContext: {
+            windowsOptions: {
+              hostProcess: false
+            }
+          }
+        }]
+        ephemeralContainers: [...{
+          securityContext: {
+            windowsOptions: {
+              hostProcess: false
+            }
+          }
+        }]
+      }

@@ -1,0 +1,42 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: host-process-rego
+  annotations:
+    catalog.chainguard.dev/title: Disallow HostProcess
+    catalog.chainguard.dev/labels: rego,workloads
+    catalog.chainguard.dev/description: |
+      Windows pods offer the ability to run HostProcess containers which enables
+      privileged access to the Windows node. Privileged access to the host is
+      disallowed in the baseline policy.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "rego"
+    data: |
+      package sigstore
+      default isCompliant = false
+      isCompliant {
+        filteredSpec = [c | c := input.spec; host_process(c)]
+        filteredContainers = [c | c := input.spec.containers[_]; host_process(c)]
+        filteredInitContainers = [c | c := input.spec.initContainers[_]; host_process(c)]
+        filteredEphemeralContainers = [c | c := input.spec.ephemeralContainers[_]; host_process(c)]
+        (count(filteredSpec) + count(filteredContainers) + count(filteredInitContainers) + count(filteredEphemeralContainers)) == 0
+      }
+      host_process(c) {
+       c.securityContext.windowsOptions.hostProcess == true
+      } {
+       c.securityContext.windowsOptions.hostProcess == "true"
+      }
+

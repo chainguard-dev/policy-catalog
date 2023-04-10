@@ -1,0 +1,19 @@
+# Copyright 2023 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: yolo
+  annotations:
+    container.apparmor.security.beta.kubernetes.io/setup: other
+spec:
+  initContainers:
+  - name: "setup"
+    image: docker.io/ubuntu
+  containers:
+  - name: "app"
+    image: docker.io/ubuntu
+  ephemeralContainers:
+  - name: "debug"
+    image: docker.io/ubuntu

@@ -1,0 +1,61 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: disallow-privilege-escalation-cue
+  annotations:
+    catalog.chainguard.dev/title: Disallow privilege escalation
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      Privilege escalation (such as via set-user-ID or set-group-ID file mode) should
+      not be allowed. This is Linux only policy in v1.25+ (spec.os.name != windows)
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      // Create a schema for SecurityContext where allowPrivilegeEscalation
+      // is a bool that defaults to true
+      #SecurityContext: {
+        allowPrivilegeEscalation: bool | *true
+        ...
+      }
+      spec: {
+        initContainers: [...{
+          // Apply the schema to the security context in each container.
+          securityContext: #SecurityContext
+          // When allowPrivilegeEscalation is true (either specified, or by default)
+          // then surface our error by "validating" name against our error string.
+          if securityContext.allowPrivilegeEscalation {
+            name: "securityContext.allowPrivilegeEscalation must be false"
+          }
+        }]
+        containers: [...{
+          // Apply the schema to the security context in each container.
+          securityContext: #SecurityContext
+          // When allowPrivilegeEscalation is true (either specified, or by default)
+          // then surface our error by "validating" name against our error string.
+          if securityContext.allowPrivilegeEscalation {
+            name: "securityContext.allowPrivilegeEscalation must be false"
+          }
+        }]
+        ephemeralContainers: [...{
+          // Apply the schema to the security context in each container.
+          securityContext: #SecurityContext
+          // When allowPrivilegeEscalation is true (either specified, or by default)
+          // then surface our error by "validating" name against our error string.
+          if securityContext.allowPrivilegeEscalation {
+            name: "securityContext.allowPrivilegeEscalation must be false"
+          }
+        }]
+      }

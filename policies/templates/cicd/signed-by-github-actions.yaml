@@ -1,0 +1,25 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: signed-by-github-actions
+  annotations:
+    catalog.chainguard.dev/title: Enforce signed GitHub releases
+    catalog.chainguard.dev/description: Enforce releases are signed by GitHub actions
+    catalog.chainguard.dev/labels: CI/CD
+spec:
+  images:
+    # This is the release v0.3.0
+    - glob: "gcr.io/projectsigstore/policy-webhook@sha256:d1e7af59381793687db4673277005276eb73a06cf555503138dd18eaa1ca47d6"
+  authorities:
+    - keyless:
+        # Signed by Fulcio
+        url: https://fulcio.sigstore.dev
+        identities:
+          # Matches the Github Actions OIDC issuer
+          - issuer: https://token.actions.githubusercontent.com
+            # Matches a specific GitHub workflow on main branch. Here we use the
+            # Sigstore policy controller example testing workflow as an example.
+            subject: "https://github.com/sigstore/policy-controller/.github/workflows/release.yaml@refs/tags/v0.3.0"

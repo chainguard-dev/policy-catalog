@@ -1,0 +1,54 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: selinux-restrictions-cue
+  annotations:
+    catalog.chainguard.dev/title: SELinux restrictions
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      Setting the SELinux type is restricted, and setting a custom SELinux user or
+      role option is forbidden.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      #SecurityContext: {
+        seLinuxOptions: {
+          // Type can have one of these values
+          type?: "" |
+                 "container_t" |
+                 "container_init_t" |
+                 "container_kvm_t"
+          // user and role must not be specified.
+          user?: ""
+          role?: ""
+          ...
+        }
+        ...
+      }
+
+      spec: {
+        securityContext: #SecurityContext
+
+        initContainers: [...{
+          securityContext: #SecurityContext
+        }]
+        containers: [...{
+          securityContext: #SecurityContext
+        }]
+        ephemeralContainers: [...{
+          securityContext: #SecurityContext
+        }]
+      }

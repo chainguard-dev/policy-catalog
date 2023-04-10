@@ -1,0 +1,47 @@
+# Copyright 2023 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+#############################################################################################
+# To generate an attestation with a scan report and attest it to an image follow these steps:
+# $ trivy image --format cosign-vuln --output vuln.json <IMAGE>
+# $ cosign attest --key /path/to/cosign.key --type vuln --predicate vuln.json <IMAGE>
+#
+# $ cosign verify-attestation --key /path/to/cosign.pub --type vuln <IMAGE>
+#############################################################################################
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: vuln-error-message-rego
+  annotations:
+    catalog.chainguard.dev/title: Custom error message
+    catalog.chainguard.dev/description: Vulnerability attestation with a custom error message
+    catalog.chainguard.dev/labels: attestation,rego
+spec:
+  images:
+    - glob: gcr.io/your-image-here/*
+  authorities:
+    - name: my-authority
+      key:
+        # REPLACE WITH YOUR PUBLIC KEY!
+        data: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3zVXrWbIzmieBGjyv1A15O4hhgm2
+          +acO+ZXx6lUMS3rLyrsLi38dfmgG19C+kh39WNCZWlWFKCkOcaLLqQLg1Q==
+          -----END PUBLIC KEY-----
+      attestations:
+        - name: must-have-vuln-attestation
+          predicateType: https://chainguard.dev/attestation/vuln/v1
+          policy:
+            type: rego
+            data: |
+              package sigstore
+              isCompliant[response] {
+                result = (input.predicateType == "chainguard.dev/attestation/vuln/v1")
+                errorMsg = "Not found expected predicate type 'chainguard.dev/attestation/vuln/v1'"
+                warnMsg = ""
+                response := {
+                  "result" : result,
+                  "error" : errorMsg,
+                  "warning" : warnMsg
+                }
+              }

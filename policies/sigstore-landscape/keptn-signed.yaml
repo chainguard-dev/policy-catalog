@@ -1,0 +1,24 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: keptn-signed
+  annotations:
+    catalog.chainguard.dev/title: Keptn is signed
+    catalog.chainguard.dev/description: |
+      Enforce that the Keptn images are signed by the Keptn
+      release's workload identity.
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+  - glob: ghcr.io/keptn/**
+  authorities:
+  - keyless:
+      url: https://fulcio.sigstore.dev
+      identities:
+      - issuer: https://token.actions.githubusercontent.com
+        subject: https://github.com/keptn/keptn/.github/workflows/test-and-build-docker-images.yml@refs/heads/master
+    ctlog:
+      url: https://rekor.sigstore.dev

@@ -1,0 +1,38 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: unsafe-sysctls-mask-cue
+  annotations:
+    catalog.chainguard.dev/title: Disallow unsafe sysctls
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      Sysctls can disable security mechanisms or affect all containers on a host,
+      and should be disallowed except for an allowed "safe" subset. A sysctl is
+      considered safe if it is namespaced in the container or the Pod, and it is
+      isolated from other Pods or processes on the same Node.
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      spec: {
+        securityContext:
+          sysctls: [...{
+            name: "kernel.shm_rmid_forced" |
+                  "net.ipv4.ip_local_port_range" |
+                  "net.ipv4.ip_unprivileged_port_start" |
+                  "net.ipv4.tcp_syncookies" |
+                  "net.ipv4.ping_group_range"
+          }]
+      }

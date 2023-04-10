@@ -1,0 +1,26 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: kyverno-signed
+  annotations:
+    catalog.chainguard.dev/title: Kyverno is signed
+    catalog.chainguard.dev/description: |
+      Enforce that the Kyverno images are signed by the Kyverno
+      release's workload identity.
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+  - glob: ghcr.io/kyverno/kyverno*
+  authorities:
+  - keyless:
+      url: https://fulcio.sigstore.dev
+      identities:
+      - issuer: https://token.actions.githubusercontent.com
+        subjectRegExp: https://github\.com/kyverno/kyverno/\.github/workflows/reuse\.yaml@refs/tags/v.*
+    source:
+    - oci: ghcr.io/kyverno/signatures
+    ctlog:
+      url: https://rekor.sigstore.dev

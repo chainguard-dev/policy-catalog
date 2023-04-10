@@ -1,0 +1,42 @@
+# Copyright 2022 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: disallow-runasuser-root-cue
+  annotations:
+    catalog.chainguard.dev/title: Disallow runAsUser root
+    catalog.chainguard.dev/labels: cue,workloads
+    catalog.chainguard.dev/description: |
+      Containers must not set runAsUser to 0
+
+    catalog.chainguard.dev/learnMoreLink: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+spec:
+  match:
+  - version: "v1"
+    resource: "pods"
+  images: [glob: '**']
+  authorities: [static: {action: pass}]
+  mode: warn
+  policy:
+    includeSpec: true
+    type: "cue"
+    data: |
+      spec: {
+        initContainers: [...{
+          securityContext: {
+            runAsUser: != 0
+          }
+        }]
+        containers: [...{
+          securityContext: {
+            runAsUser: != 0
+          }
+        }]
+        ephemeralContainers: [...{
+          securityContext: {
+            runAsUser: != 0
+          }
+        }]
+      }

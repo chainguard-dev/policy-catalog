@@ -1,0 +1,50 @@
+# Copyright 2023 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+#############################################################################################
+# To generate an attestation with a scan report and attest it to an image follow these steps:
+# $ trivy image --format cosign-vuln --output vuln.json <IMAGE>
+# $ cosign attest --key /path/to/cosign.key --type vuln --predicate vuln.json <IMAGE>
+#
+# $ cosign verify-attestation --key /path/to/cosign.pub --type vuln <IMAGE>
+#############################################################################################
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: vuln-no-high-or-critical-rego
+  annotations:
+    catalog.chainguard.dev/title: Fail on high or critical CVEs
+    catalog.chainguard.dev/description: Vulnerability attestation with no High or Critical CVEs
+    catalog.chainguard.dev/labels: attestation,rego
+spec:
+  images:
+    - glob: "**"
+  authorities:
+    - name: my-authority
+      key:
+          # REPLACE WITH YOUR PUBLIC KEY!
+          data: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESWmPfv6b083TNcwY4SlYcZULn7jX
+            /vfUyU7CPr2zssLc3+8SWAv2ZY59pofKnvYBp9dNiNwVTkrxab1bcpocVg==
+            -----END PUBLIC KEY-----
+      attestations:
+        - name: must-not-have-high-critical-cves
+          predicateType: https://cosign.sigstore.dev/attestation/vuln/v1
+          policy:
+            type: rego
+            data: |
+              package sigstore
+              isCompliant[response] {
+                input.predicateType = "https://cosign.sigstore.dev/attestation/vuln/v1"
+                filteredHighSeverity = [c | c := input.predicate.scanner.result.Results[_].Vulnerabilities[_]; c.Severity == "HIGH"]
+                filteredCriticalSeverity = [c | c := input.predicate.scanner.result.Results[_].Vulnerabilities[_]; c.Severity == "CRITICAL"]
+                result = ((count(filteredHighSeverity) + count(filteredCriticalSeverity)) == 0)
+                errorMsg = sprintf("Found HIGH '%d' and CRITICAL '%d' vulnerabilities", [count(filteredHighSeverity) ,count(filteredCriticalSeverity)])
+                warnMsg = ""
+                response := {
+                  "result" : result,
+                  "error" : errorMsg,
+                  "warning" : warnMsg
+                }
+              }
