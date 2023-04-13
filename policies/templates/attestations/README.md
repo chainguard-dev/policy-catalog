@@ -8,11 +8,11 @@ To generate a cosign vulnerability scan record, you can use Trivy and use Cosign
 
 ```shell
 trivy image --format cosign-vuln --output vuln.json <IMAGE>
-cosign attest --key /path/to/cosign.key --type vuln --predicate vuln.json <IMAGE>
+cosign attest --key /path/to/cosign.key --type https://cosign.sigstore.dev/attestation/vuln/v1 --predicate vuln.json <IMAGE>
 ```
 
 You can verify the attestation has been attached to the image:
 
 ```shell
-cosign verify-attestation --key /path/to/cosign.pub --type vuln <IMAGE>
+cosign verify-attestation --key /path/to/cosign.pub --type https://cosign.sigstore.dev/attestation/vuln/v1 <IMAGE>
 ```
