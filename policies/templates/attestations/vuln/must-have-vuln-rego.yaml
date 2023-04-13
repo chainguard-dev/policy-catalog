@@ -4,9 +4,9 @@
 #############################################################################################
 # To generate an attestation with a scan report and attest it to an image follow these steps:
 # $ trivy image --format cosign-vuln --output vuln.json <IMAGE>
-# $ cosign attest --key /path/to/cosign.key --type vuln --predicate vuln.json <IMAGE>
+# $ cosign attest --key /path/to/cosign.key --type https://cosign.sigstore.dev/attestation/vuln/v1 --predicate vuln.json <IMAGE>
 #
-# $ cosign verify-attestation --key /path/to/cosign.pub --type vuln <IMAGE>
+# $ cosign verify-attestation --key /path/to/cosign.pub --type https://cosign.sigstore.dev/attestation/vuln/v1 <IMAGE>
 #############################################################################################
 apiVersion: policy.sigstore.dev/v1beta1
 kind: ClusterImagePolicy
