@@ -20,3 +20,22 @@ spec:
             subject: https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main
       ctlog:
         url: https://rekor.sigstore.dev
+      attestations:
+        - name: must-have-spdx-attestation
+          predicateType: https://spdx.dev/Document
+          policy:
+            type: cue
+            data: |
+              predicateType: "https://spdx.dev/Document"
+        - name: must-have-vuln-attestation
+          predicateType: https://cosign.sigstore.dev/attestation/vuln/v1
+          policy:
+            type: cue
+            data: |
+              predicateType: "https://cosign.sigstore.dev/attestation/vuln/v1"
+        - name: must-have-provenance-attestation
+          predicateType: https://slsa.dev/provenance/v0.2
+          policy:
+            type: cue
+            data: |
+              predicateType: "https://slsa.dev/provenance/v0.2"
