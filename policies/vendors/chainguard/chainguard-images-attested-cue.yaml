@@ -4,10 +4,10 @@
 apiVersion: policy.sigstore.dev/v1beta1
 kind: ClusterImagePolicy
 metadata:
-  name: chainguard-images-signed
+  name: chainguard-images-attested-cue
   annotations:
     catalog.chainguard.dev/title: Chainguard Images
-    catalog.chainguard.dev/description: Enforce Chainguard images have provenance, vulnerability, and SPDX attestations.
+    catalog.chainguard.dev/description: Enforce Chainguard images are signed.
     catalog.chainguard.dev/labels: chainguard
 spec:
   images:

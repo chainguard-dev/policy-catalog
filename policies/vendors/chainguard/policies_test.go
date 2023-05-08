@@ -29,6 +29,16 @@ func TestPolicies(t *testing.T) {
 		image:  "cgr.dev/chainguard/busybox",
 		check:  All(NoErrors, NoWarnings),
 	}, {
+		name:   "static-is-attested",
+		policy: "chainguard-images-attested-cue.yaml",
+		image:  "cgr.dev/chainguard/static",
+		check:  All(NoErrors, NoWarnings),
+	}, {
+		name:   "busybox-is-attested",
+		policy: "chainguard-images-attested-cue.yaml",
+		image:  "cgr.dev/chainguard/busybox",
+		check:  All(NoErrors, NoWarnings),
+	}, {
 		name:   "old-image-does-not-verify",
 		policy: "chainguard-images-signed.yaml",
 		// predated the mono repo, so the signer is wrong.
