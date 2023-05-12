@@ -15,7 +15,7 @@ Policies are grouped within the [`policies`](./policies) directory according to 
 | [Benchmarks](/policies/benchmarks)| Policies that help you reach certain benchmarks, such as Pod Security Standards |
 | [Images](/policies/images) | Policies that enforce certain aspects of OCI images |
 | [Packages](/policies/packages) | Policies that detect specific packages in the SBOM attached to an image, such as Log4Shell |
-| [Sigstore Landscape](/policies/sigstore-landscape) | Ready-to-use policies to verify the signature of various images documented in the OpenSSF Signstore Landscape |
+| [Sigstore Landscape](/policies/sigstore-landscape) | Ready-to-use policies to verify the signature of various images documented in the OpenSSF Sigstore Landscape |
 | [Templates](/policies/templates) | A variety of templates to start authoring custom policies |
 | [Vendors](/policies/vendors) | Ready to use policies provided by commercial vendors |
 
