@@ -1,0 +1,23 @@
+# Copyright 2023 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: policy-controller-signed
+  annotations:
+    catalog.chainguard.dev/title: Policy-Controller is signed
+    catalog.chainguard.dev/description: |
+      Enforce that the Policy-Controller images are signed by Sigstore release's workload identity.
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+  - glob: ghcr.io/sigstore/policy-controller/**
+  authorities:
+  - keyless:
+      url: https://fulcio.sigstore.dev
+      identities:
+      - issuer: https://token.actions.githubusercontent.com
+        subjectRegExp: https://github.com/sigstore/policy-controller/.github/workflows/release.yaml@refs/tags/v.*
+    ctlog:
+      url: https://rekor.sigstore.dev
