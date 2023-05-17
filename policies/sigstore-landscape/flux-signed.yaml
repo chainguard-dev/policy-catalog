@@ -14,12 +14,12 @@ metadata:
     catalog.chainguard.dev/labels: components
 spec:
   images:
-  - glob: ghcr.io/fluxcd/source-controller*
+  - glob: ghcr.io/fluxcd/*
   authorities:
   - keyless:
       url: https://fulcio.sigstore.dev
       identities:
       - issuer: https://token.actions.githubusercontent.com
-        subjectRegExp: https://github\.com/fluxcd/source-controller/\.github/workflows/release\.yml@refs/tags/v.*
+        subjectRegExp: https://github\.com/fluxcd/.*/\.github/workflows/release\.yml@refs/tags/v.*
     ctlog:
       url: https://rekor.sigstore.dev
