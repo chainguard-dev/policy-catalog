@@ -165,6 +165,11 @@ func TestPolicies(t *testing.T) {
 		policy: "keptn-signed.yaml",
 		image:  "ghcr.io/keptn/api:1.0.0",
 		check:  All(NoWarnings, NoErrors),
+	}, {
+		name:   "Policy-Controller is signed",
+		policy: "policy-controller-signed.yaml",
+		image:  "ghcr.io/sigstore/policy-controller/policy-webhook:v0.7.0",
+		check:  All(NoWarnings, NoErrors),
 	}}
 
 	for _, test := range tests {
