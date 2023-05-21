@@ -54,6 +54,11 @@ func TestPolicies(t *testing.T) {
 		policy: "chainguard-enforce-agent-signed.yaml",
 		image:  "us.gcr.io/prod-enforce-fabc/controlplane@sha256:25ab95c63c7148dd7ba5d8de82abcc67a9fea9e9d2be74bb675a75f4f31e3762",
 		check:  All(NoErrors, NoWarnings),
+	}, {
+		name:   "tagged chainctl is signed",
+		policy: "chainguard-enforce-agent-signed.yaml",
+		image:  "us.gcr.io/prod-enforce-fabc/chainctl:v0.1.117",
+		check:  All(NoErrors, NoWarnings),
 	}}
 
 	for _, test := range tests {
