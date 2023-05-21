@@ -17,6 +17,10 @@ spec:
         url: https://rekor.sigstore.dev
       keyless:
         identities:
+          # This applies to the agent images (including the chainctl sidecar)
           - issuer: https://token.actions.githubusercontent.com
             subjectRegExp: https://github\.com/chainguard-dev/mono/\.github/workflows/\.build-drop\.yaml@refs/tags/v.*
+          # This applies to the standalone chainctl image we release (with our version tags).
+          - issuer: https://token.actions.githubusercontent.com
+            subjectRegExp: https://github\.com/chainguard-dev/mono/\.github/workflows/\.release-drop\.yaml@refs/tags/v.*
         url: https://fulcio.sigstore.dev
