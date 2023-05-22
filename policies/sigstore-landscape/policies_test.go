@@ -136,9 +136,24 @@ func TestPolicies(t *testing.T) {
 		image:  "index.docker.io/cilium/cilium:v1.12.4",
 		check:  All(NoWarnings, CheckError("no matching signatures")),
 	}, {
-		name:   "Flux source-controller is signed",
+		name:   "Flux source-controller is signed (helm)",
 		policy: "flux-signed.yaml",
-		image:  "ghcr.io/fluxcd/source-controller:v0.32.1",
+		image:  "ghcr.io/fluxcd/helm-controller:v0.31.2",
+		check:  All(NoWarnings, NoErrors),
+	}, {
+		name:   "Flux source-controller is signed (kustomzise)",
+		policy: "flux-signed.yaml",
+		image:  "ghcr.io/fluxcd/kustomize-controller:v0.35.1",
+		check:  All(NoWarnings, NoErrors),
+	}, {
+		name:   "Flux source-controller is signed (source)",
+		policy: "flux-signed.yaml",
+		image:  "ghcr.io/fluxcd/source-controller:v0.36.1",
+		check:  All(NoWarnings, NoErrors),
+	}, {
+		name:   "Flux source-controller is signed (notification)",
+		policy: "flux-signed.yaml",
+		image:  "ghcr.io/fluxcd/notification-controller:v0.32.1",
 		check:  All(NoWarnings, NoErrors),
 	}, {
 		name:   "Kyverno is signed",
