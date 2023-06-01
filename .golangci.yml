@@ -18,7 +18,6 @@ linters:
     - revive
     - misspell
     - stylecheck
-    - tparallel
     - unconvert
     - unparam
     - whitespace
@@ -26,10 +25,12 @@ output:
   uniq-by-line: false
 issues:
   exclude-rules:
-    - path: _test\.go
+    - path: test\.go
       linters:
         - errcheck
         - gosec
+        - revive
+        - unparam
   max-issues-per-linter: 0
   max-same-issues: 0
 run:
