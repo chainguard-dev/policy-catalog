@@ -37,7 +37,7 @@ jobs:
         run: |
           go install github.com/sigstore/policy-controller/cmd/tester
           # Rename it as policy-tester for clarity.
-          mv $(which tester) $(dirname $(which tester))/policy-tester
+          mv "$(which tester)" "$(dirname "$(which tester)")/policy-tester"
 
       - run: |
           go test -v ./...
