@@ -1,11 +1,13 @@
 # Copyright 2021 Chainguard, Inc.
 # SPDX-License-Identifier: Apache-2.0
 
-name: Lint
+name: lints
 
 on:
+  push:
+    branches:
+      - 'main'
   pull_request:
-    branches: [ 'main', 'release-*' ]
 
 jobs:
 
@@ -16,19 +18,18 @@ jobs:
       fail-fast: false # Keep running if one leg fails.
       matrix:
         extension:
-        - yaml
-        - go
+          - yaml
+          - go
 
         # Map between extension and human-readable name.
         include:
-        - extension: yaml
-          language: YAML
-        - extension: go
-          language: Go
+          - extension: yaml
+            language: YAML
+          - extension: go
+            language: Go
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
 
       - uses: chainguard-dev/actions/boilerplate@main
         with:
@@ -40,16 +41,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
       - name: Action lint
-        uses: reviewdog/action-actionlint@4decc2a20473dcd14c8c3dc8a27da19d95bb9f59 # v1.34.2
+        uses: reviewdog/action-actionlint@42de1e3a0f52d5f8b8390894de87bc603844e530 # v1.37.0
 
   spacing:
     name: Spacing
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
       - uses: chainguard-dev/actions/trailing-space@main
       - uses: chainguard-dev/actions/eof-newline@main
 
@@ -58,5 +59,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
       - uses: chainguard-dev/actions/donotsubmit@main
+
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+      - uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4.0.1
+        with:
+          go-version: '1.20'
+          check-latest: true
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@08e2f20817b15149a52b5b3ebe7de50aff2ba8c5 # v3.4.0
+        with:
+          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
+          version: v1.52
+          args: --timeout=5m
