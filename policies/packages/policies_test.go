@@ -24,7 +24,7 @@ func TestPolicies(t *testing.T) {
 		image:  "ghcr.io/mattmoor/sbom-attestations/cyclone-test@sha256:ba4037061b76ad8f306dd9e442877236015747ec42141caf504dc0df4d10708d",
 		check: All(
 			NoWarnings,
-			CheckError("CycloneDX SBOM contains package log4j-core version 2.14.1 which is vulnerable to Log4Shell (CVE-2021-44228)"),
+			CheckError("Error: CycloneDX SBOM contains package version 2.14.1 which is vulnerable to Log4Shell (CVE-2021-44228)"),
 		),
 	}}
 

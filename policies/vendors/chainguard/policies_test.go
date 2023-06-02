@@ -16,8 +16,7 @@ func TestPolicies(t *testing.T) {
 		name   string
 		policy string
 		image  string
-
-		check Check
+		check  Check
 	}{{
 		name:   "static-is-signed",
 		policy: "chainguard-images-signed.yaml",

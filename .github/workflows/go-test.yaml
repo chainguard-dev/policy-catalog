@@ -1,46 +1,43 @@
 # Copyright 2022 Chainguard, Inc.
 # SPDX-License-Identifier: Apache-2.0
 
-name: Test
+name: test
 
 on:
   pull_request:
-    branches: [ 'main', 'release-*' ]
   push:
-    branches: [ 'main', 'release-*' ]
+    branches:
+      - 'main'
 
 jobs:
-
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: Check out code onto GOPATH
-      uses: actions/checkout@v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
 
-    # https://github.com/mvdan/github-actions-golang#how-do-i-set-up-caching-between-builds
-    - uses: actions/cache@v3
-      with:
-        # In order:
-        # * Module download cache
-        # * Build cache (Linux)
-        path: |
-          ~/go/pkg/mod
-          ~/.cache/go-build
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+      - uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        with:
+          # In order:
+          # * Module download cache
+          # * Build cache (Linux)
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
-    - name: Set up Go 1.19.x
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.19
-        check-latest: true
+      - uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4.0.1
+        with:
+          go-version: '1.20'
+          check-latest: true
+          cache: false
 
-    - name: Setup policy-tester
-      run: |
-        go install github.com/sigstore/policy-controller/cmd/tester
-        # Rename it as policy-tester for clarity.
-        mv $(which tester) $(dirname $(which tester))/policy-tester
+      - name: Setup policy-tester
+        run: |
+          go install github.com/sigstore/policy-controller/cmd/tester
+          # Rename it as policy-tester for clarity.
+          mv "$(which tester)" "$(dirname "$(which tester)")/policy-tester"
 
-    - run: |
-        go test ./...
+      - run: |
+          go test -v ./...
