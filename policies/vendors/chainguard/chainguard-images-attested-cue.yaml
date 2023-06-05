@@ -27,13 +27,6 @@ spec:
             type: cue
             data: |
               predicateType: "https://spdx.dev/Document"
-        # TODO: uncomment this when we start signing the vuln attestation again
-        # - name: must-have-vuln-attestation-cue
-        #   predicateType: https://cosign.sigstore.dev/attestation/vuln/v1
-        #   policy:
-        #     type: cue
-        #     data: |
-        #       predicateType: "https://cosign.sigstore.dev/attestation/vuln/v1"
         - name: must-have-provenance-attestation-cue
           predicateType: https://slsa.dev/provenance/v0.2
           policy:
