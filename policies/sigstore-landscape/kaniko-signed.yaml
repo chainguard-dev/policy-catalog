@@ -1,0 +1,24 @@
+# Copyright 2023 Chainguard, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: kaniko-signed
+  annotations:
+    catalog.chainguard.dev/title: Kaniko is signed
+    catalog.chainguard.dev/description: |
+      Enforce that the Kaniko images are signed using the upstream
+      verification key.
+    catalog.chainguard.dev/labels: components
+spec:
+  images:
+    - glob: gcr.io/kaniko-project/**
+  authorities:
+    - key:
+        # From: https://github.com/GoogleContainerTools/kaniko#verifying-signed-kaniko-images
+        data: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9aAfAcgAxIFMTstJUv8l/AMqnSKw
+          P+vLu3NnnBDHCfREQpV/AJuiZ1UtgGpFpHlJLCNPmFkzQTnfyN5idzNl6Q==
+          -----END PUBLIC KEY-----

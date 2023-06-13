@@ -185,6 +185,11 @@ func TestPolicies(t *testing.T) {
 		policy: "policy-controller-signed.yaml",
 		image:  "ghcr.io/sigstore/policy-controller/policy-webhook:v0.7.0",
 		check:  All(NoWarnings, NoErrors),
+	}, {
+		name:   "Kaniko is signed",
+		policy: "kaniko-signed.yaml",
+		image:  "gcr.io/kaniko-project/executor:v1.11.0",
+		check:  All(NoWarnings, NoErrors),
 	}}
 	for _, test := range tests {
 		test := test
