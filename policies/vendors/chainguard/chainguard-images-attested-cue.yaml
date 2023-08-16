@@ -28,8 +28,8 @@ spec:
             data: |
               predicateType: "https://spdx.dev/Document"
         - name: must-have-provenance-attestation-cue
-          predicateType: https://slsa.dev/provenance/v0.2
+          predicateType: https://slsa.dev/provenance/v1
           policy:
             type: cue
             data: |
-              predicateType: "https://slsa.dev/provenance/v0.2"
+              predicateType: "https://slsa.dev/provenance/v1"
