@@ -21,8 +21,8 @@ func TestPolicies(t *testing.T) {
 	}{{
 		name:   "maximum image age",
 		policy: "maximum-image-age-rego.yaml",
-		// This is updated daily.
-		image: "cgr.dev/chainguard/static",
+		// This has been updated recently.
+		image: "cgr.dev/chainguard/nginx",
 		check: All(
 			NoErrors,
 			NoWarnings,
