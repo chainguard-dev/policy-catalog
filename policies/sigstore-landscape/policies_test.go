@@ -62,7 +62,7 @@ func TestPolicies(t *testing.T) {
 		name:   "kube state metrics before it was signed (fails)",
 		policy: "kubernetes-signed.yaml",
 		image:  "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.5.0",
-		check:  All(NoWarnings, CheckError("no signatures found for image")),
+		check:  All(NoWarnings, CheckError("no matching signatures")),
 	}, {
 		name:   "kube state metrics is signed",
 		policy: "kubernetes-signed.yaml",
@@ -134,7 +134,7 @@ func TestPolicies(t *testing.T) {
 		name:   "Cilium wasn't signed in 1.12",
 		policy: "cilium-signed.yaml",
 		image:  "index.docker.io/cilium/cilium:v1.12.4",
-		check:  All(NoWarnings, CheckError("no signatures found for image")),
+		check:  All(NoWarnings, CheckError("no matching signatures")),
 	}, {
 		name:   "Flux source-controller is signed (helm)",
 		policy: "flux-signed.yaml",
