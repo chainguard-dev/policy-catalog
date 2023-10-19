@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/sigstore/policy-controller v0.8.2
-	k8s.io/apimachinery v0.28.2
+	k8s.io/apimachinery v0.28.3
 	knative.dev/pkg v0.0.0-20230612083802-15605c78a270
 	sigs.k8s.io/yaml v1.3.0
 )
