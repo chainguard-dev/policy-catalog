@@ -43,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Action lint
-        uses: reviewdog/action-actionlint@9ccda195fd3a290c8596db7f1958c897deaa8c76 # v1.40.0
+        uses: reviewdog/action-actionlint@b0a6aebe1d2191decc9b4f022cdfc248b702477d # v1.42.0
 
   spacing:
     name: Spacing
