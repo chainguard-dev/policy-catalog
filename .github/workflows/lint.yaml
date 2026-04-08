@@ -36,7 +36,7 @@ jobs:
 
       - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
 
-      - uses: chainguard-dev/actions/boilerplate@5363dd9eb48083bbf7674a4bbe62d71c3b230edd # main
+      - uses: chainguard-dev/actions/boilerplate@f45211d3e8f9d2676c6b8cdd6a765435e06c819d # main
         with:
           extension: ${{ matrix.extension }}
           language: ${{ matrix.language }}
@@ -66,8 +66,8 @@ jobs:
           egress-policy: audit
 
       - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
-      - uses: chainguard-dev/actions/trailing-space@5363dd9eb48083bbf7674a4bbe62d71c3b230edd # main
-      - uses: chainguard-dev/actions/eof-newline@5363dd9eb48083bbf7674a4bbe62d71c3b230edd # main
+      - uses: chainguard-dev/actions/trailing-space@f45211d3e8f9d2676c6b8cdd6a765435e06c819d # main
+      - uses: chainguard-dev/actions/eof-newline@f45211d3e8f9d2676c6b8cdd6a765435e06c819d # main
 
   donotsubmit:
     name: Do not submit
@@ -80,7 +80,7 @@ jobs:
           egress-policy: audit
 
       - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
-      - uses: chainguard-dev/actions/donotsubmit@5363dd9eb48083bbf7674a4bbe62d71c3b230edd # main
+      - uses: chainguard-dev/actions/donotsubmit@f45211d3e8f9d2676c6b8cdd6a765435e06c819d # main
 
   golangci:
     name: lint
