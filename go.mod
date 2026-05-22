@@ -1,6 +1,6 @@
 module github.com/chainguard-dev/policy-catalog
 
-go 1.21
+go 1.25
 
 require (
 	github.com/sigstore/policy-controller v0.8.4
