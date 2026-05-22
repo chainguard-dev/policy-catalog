@@ -39,7 +39,7 @@ func TestPolicies(t *testing.T) {
 		policy: "vuln-maximum-scan-age-rego.yaml",
 		image:  "ghcr.io/chipzoller/zulu:latest",
 		check: All(
-			CheckWarning("policy 0: invalid value: cosign.sigstore.dev/attestation/vuln/v1: spec.authorities[0].attestations.predicateType\ndeprecated value, please use RFC 3986 conformant values"),
+			NoWarnings,
 			CheckError("Scan exceeds maximum allowed age"),
 		),
 	}}

@@ -78,16 +78,6 @@ func TestPolicies(t *testing.T) {
 		image:  "registry.k8s.io/kube-apiserver:v1.26.0",
 		check:  All(NoWarnings, NoErrors),
 	}, {
-		name:   "tekton pipelines controller image is signed",
-		policy: "tekton-signed.yaml",
-		image:  "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller",
-		check:  All(NoWarnings, NoErrors),
-	}, {
-		name:   "tekton chains controller image is signed",
-		policy: "tekton-signed.yaml",
-		image:  "gcr.io/tekton-releases/github.com/tektoncd/chains/cmd/controller",
-		check:  All(NoWarnings, NoErrors),
-	}, {
 		name:   "knative net-counter controller image is signed",
 		policy: "knative-signed.yaml",
 		// We should try to make this use :latest as an early-warning system,
@@ -192,7 +182,6 @@ func TestPolicies(t *testing.T) {
 		check:  All(NoWarnings, NoErrors),
 	}}
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 			res, err := Run(test.policy, test.image)

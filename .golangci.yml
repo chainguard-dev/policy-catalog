@@ -1,37 +1,49 @@
-# Copyright 2023 Chainguard, Inc.
-# SPDX-License-Identifier: Apache-2.0
-
+version: "2"
+run:
+  issues-exit-code: 1
 linters:
   enable:
     - asciicheck
-    - unused
-    - errcheck
     - errorlint
     - forbidigo
-    - gofmt
-    - goimports
-    - gosec
     - gocritic
+    - gosec
     - importas
+    - misspell
     - prealloc
     - revive
-    - misspell
-    - stylecheck
+    - staticcheck
     - unconvert
     - unparam
     - whitespace
-output:
-  uniq-by-line: false
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - errcheck
+          - gosec
+          - revive
+          - unparam
+        path: test\.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
 issues:
-  exclude-rules:
-    - path: test\.go
-      linters:
-        - errcheck
-        - gosec
-        - revive
-        - unparam
   max-issues-per-linter: 0
   max-same-issues: 0
-run:
-  issues-exit-code: 1
-  timeout: 10m
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
