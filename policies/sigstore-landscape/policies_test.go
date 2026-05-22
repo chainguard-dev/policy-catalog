@@ -182,7 +182,6 @@ func TestPolicies(t *testing.T) {
 		check:  All(NoWarnings, NoErrors),
 	}}
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 			res, err := Run(test.policy, test.image)
