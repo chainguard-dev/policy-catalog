@@ -104,7 +104,7 @@ jobs:
         with:
           persist-credentials: false # Don't persist credentials to avoid accidental pushes.
 
-      - uses: chainguard-dev/actions/donotsubmit@05fbd381f7c158bd33c9bbf3a28f67852269fdf8 # v1.6.21
+      - uses: chainguard-dev/actions/donotsubmit@f0be69916b439d0fcced2451b23d0f27cd46d545 # v1.6.26
 
   golangci:
     name: lint
