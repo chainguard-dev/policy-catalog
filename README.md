@@ -2,7 +2,7 @@
 
 This policy catalog contains `ClusterImagePolicy` resources for implementing security policies on Kubernetes clusters using Sigstore’s [Policy Controller](https://github.com/sigstore/policy-controller) or [Chainguard Enforce](https://www.chainguard.dev/chainguard-enforce). These policies set conditions for admitting images into your cluster, such as requiring signed images, enforcing SBOM attestations, or ensuring Log4Shell is not running. Many of these policies can be used out of the box but you can also modify them for your own use case.
 
-Both Policy Controller and Enforce support the use of CUE and Rego policy restraints to enable fully-customizable policy creation. Designed specifically for software supply chain security needs, Policy Controller and Enforce are both integrated with Sigstore's suite of tools, enabling you to leverage policy restraints based on verifiable supply chain metadata from [Cosign](https://edu.chainguard.dev/open-source/sigstore/cosign/an-introduction-to-cosign/).
+Both Policy Controller and Enforce support the use of CUE and Rego policy restraints to enable fully-customizable policy creation. Designed specifically for software supply chain security needs, Policy Controller and Enforce are both integrated with Sigstore's suite of tools, enabling you to leverage policy restraints based on verifiable supply chain metadata from [Cosign](https://www.chainguard.dev/docs/open-source/sigstore/cosign/an-introduction-to-cosign).
 
 We encourage community contributions, additions, and requests to the Policy Catalog. To contribute to the policy catalogue or add a new policy, please visit our [documentation on contributing](./CONTRIBUTING.md). To request the creation of a new policy, please read the [Policy requests](#policy-requests) section below.
 
@@ -33,7 +33,7 @@ We encourage Cosign users to upgrade their infrastructure to Cosign 2.0 to help 
 
 ## Using policies with Sigstore’s Policy Controller
 
-Sigstore’s `policy-controller` is an open source Kubernetes admissions controller for creating policies based on verifiable supply-chain metadata from Cosign. To use the policies in this catalog with Policy Controller, follow our [installation guide](https://edu.chainguard.dev/open-source/sigstore/policy-controller/how-to-install-policy-controller/) and browse our growing list of [policy tutorials](https://edu.chainguard.dev/open-source/sigstore/policy-controller). For further guidance, visit Sigstore's documentation on [configuring the `policy-controller`](https://docs.sigstore.dev/policy-controller/overview/#configuring-policy-controller-clusterimagepolicy).
+Sigstore’s `policy-controller` is an open source Kubernetes admissions controller for creating policies based on verifiable supply-chain metadata from Cosign. To use the policies in this catalog with Policy Controller, follow our [installation guide](https://www.chainguard.dev/docs/open-source/sigstore/policy-controller/how-to-install-policy-controller) and browse our growing list of [policy tutorials](https://www.chainguard.dev/docs/open-source/sigstore/policy-controller). For further guidance, visit Sigstore's documentation on [configuring the `policy-controller`](https://docs.sigstore.dev/policy-controller/overview/#configuring-policy-controller-clusterimagepolicy).
 
 ## Using policies with Chainguard Enforce
 

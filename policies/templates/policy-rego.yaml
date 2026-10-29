@@ -13,7 +13,7 @@ metadata:
     catalog.chainguard.dev/description: |
       Create your custom Rego-based policy
 
-    catalog.chainguard.dev/learnMoreLink: https://edu.chainguard.dev/chainguard/chainguard-enforce/chainguard-enforce-kubernetes/chainguard-enforce-rego-policies/
+    catalog.chainguard.dev/learnMoreLink: https://www.chainguard.dev/docs/open-source/sigstore/policy-controller/policies/chainguard-enforce-rego-policies
 
 # The spec fields are defined at https://github.com/sigstore/policy-controller/blob/main/docs/api-types/index.md#clusterimagepolicyspec
 # By default, this policy will apply to all images (glob: '**'). See documentation for filtering to specific image sources with a glob pattern.
