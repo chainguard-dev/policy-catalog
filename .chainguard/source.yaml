@@ -4,9 +4,10 @@
 spec:
   authorities:
     - keyless:
-        url: https://fulcio.sigstore.dev
-      ctlog:
-        url: https://rekor.sigstore.dev
+        # allow commits signed by users using GitHub or Google OIDC
+        identities:
+          - issuer: https://accounts.google.com
+          - issuer: https://github.com/login/oauth
     - key:
-        # Allow commits signed by GitHub.
+        # allow commits signed by GitHub, e.g. the UI
         kms: https://github.com/web-flow.gpg
