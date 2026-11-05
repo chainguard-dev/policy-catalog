@@ -46,7 +46,7 @@ jobs:
         with:
           persist-credentials: false # Don't persist credentials to avoid accidental pushes.
 
-      - uses: chainguard-dev/actions/boilerplate@05fbd381f7c158bd33c9bbf3a28f67852269fdf8 # v1.6.21
+      - uses: chainguard-dev/actions/boilerplate@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
         with:
           extension: ${{ matrix.extension }}
           language: ${{ matrix.language }}
