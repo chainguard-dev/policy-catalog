@@ -40,15 +40,13 @@ jobs:
 
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.26'
+          go-version: '1.27'
           check-latest: true
           cache: false
 
       - name: Setup policy-tester
         run: |
-          go install github.com/sigstore/policy-controller/cmd/tester
-          # Rename it as policy-tester for clarity.
-          mv "$(which tester)" "$(dirname "$(which tester)")/policy-tester"
+          go install ./cmd/policy-tester
 
       - run: |
           go test -v ./...

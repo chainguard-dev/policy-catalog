@@ -35,15 +35,17 @@ spec:
               let text4shell_versions = ["1.5", "1.6", "1.7", "1.8", "1.9"]
 
               predicate: components: [...{
-                name:    name
-                version: version
+                name:    *"" | string
+                version: *"" | string
+                // Conflicts with the error message below, which fails the
+                // policy and surfaces the message.
+                vulnerable: false
                 if list.Contains(text4shell_names, name) &&
                   list.Contains(text4shell_versions, version) {
-                  err: strings.Join([
+                  vulnerable: strings.Join([
                     "Error: CycloneDX SBOM contains package",
                     name, "version", version, "which is",
                     "vulnerable to text4shell (CVE-2022-42889)",
                   ], " ")
-                  name: err
                 }
               }]

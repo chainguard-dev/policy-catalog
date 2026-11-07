@@ -44,16 +44,18 @@ spec:
               predicate: {
                   Data: {
                       components: [...{
-                          name: name
-                          version: version
+                          name: *"" | string
+                          version: *"" | string
+                          // Conflicts with the error message below, which
+                          // fails the policy and surfaces the message.
+                          vulnerable: false
                           if list.Contains(log4shell_names, name) &&
                               list.Contains(log4shell_versions, version) {
-                              err: strings.Join([
+                              vulnerable: strings.Join([
                                   "Error: CycloneDX SBOM contains package",
                                   name, "version", version, "which is",
                                   "vulnerable to Log4Shell (CVE-2021-44228)"
                               ], " ")
-                              name: err
                           }
                       }]
                   }
@@ -82,16 +84,18 @@ spec:
               predicate: {
                   Data: {
                       packages: [...{
-                          name: name
-                          versionInfo: versionInfo
+                          name: *"" | string
+                          versionInfo: *"" | string
+                          // Conflicts with the error message below, which
+                          // fails the policy and surfaces the message.
+                          vulnerable: false
                           if list.Contains(log4shell_names, name) &&
                               list.Contains(log4shell_versions, versionInfo) {
-                              err: strings.Join([
+                              vulnerable: strings.Join([
                                   "Error: SPDX SBOM contains package",
                                   name, "version", versionInfo, "which is",
                                   "vulnerable to Log4Shell (CVE-2021-44228)"
                               ], " ")
-                              name: err
                           }
                       }]
                   }
