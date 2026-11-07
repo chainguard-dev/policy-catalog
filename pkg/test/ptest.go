@@ -15,14 +15,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sigstore/policy-controller/pkg/webhook"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// Result is the JSON printed by cmd/policy-tester.
 type Result struct {
-	Errors   []string              `json:"errors,omitempty"`
-	Warnings []string              `json:"warnings,omitempty"`
-	Result   *webhook.PolicyResult `json:"result"`
+	Errors   []string `json:"errors,omitempty"`
+	Warnings []string `json:"warnings,omitempty"`
 }
 
 func Run(policy, image string, opts ...RunOption) (*Result, error) {
