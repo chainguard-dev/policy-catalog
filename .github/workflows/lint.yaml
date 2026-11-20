@@ -87,7 +87,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false # Don't persist credentials to avoid accidental pushes.
-      - uses: chainguard-dev/actions/trailing-space@a25ce483d875a46f4c837e85e32e0fda602693f5 # v1.8.1
+      - uses: chainguard-dev/actions/trailing-space@d496b2ab65497cac13d77ccd5038b8aae7e8c43b # v1.8.2
       - uses: chainguard-dev/actions/eof-newline@d496b2ab65497cac13d77ccd5038b8aae7e8c43b # v1.8.2
 
   donotsubmit:
